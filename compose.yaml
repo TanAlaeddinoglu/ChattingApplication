@@ -1,0 +1,47 @@
+version: '3.8'
+services:
+  mongodb:
+    image: mongo:6.0
+    container_name: chat-app-mongo-db
+    restart: always
+    ports:
+      - '27017:27017'
+    environment:
+      MONGO_INITDB_ROOT_DATABASE: chat_app_db
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: 123456
+    volumes:
+      - mongo_data:/data
+
+  mongo-express:
+    image: mongo-express:1.0.2-20-alpine3.19
+    container_name: chat-app-mongo-exp
+    restart: always
+    ports:
+      - '8082:8081'
+    environment:
+      ME_CONFIG_MONGODB_ADMINUSERNAME: root
+      ME_CONFIG_MONGODB_ADMINPASSWORD: 123456
+      ME_CONFIG_MONGODB_SERVER: mongodb
+    depends_on:
+      - mongodb
+
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: chat-app-backend
+    restart: always
+    depends_on:
+      - mongodb
+    environment:
+      # IMPORTANT: inside Docker network we use "mongodb", NOT localhost
+      SPRING_DATA_MONGODB_URI: mongodb://root:123456@mongodb:27017/chat_app_db?authSource=admin
+      # You can also add: SPRING_PROFILES_ACTIVE: docker
+    ports:
+      - "8081:8080"  # app is inside container on 8080 → host 8081
+
+volumes:
+  mongo_data:
+
+
