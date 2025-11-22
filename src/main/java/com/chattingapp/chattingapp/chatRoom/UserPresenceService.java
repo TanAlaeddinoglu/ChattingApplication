@@ -53,4 +53,12 @@ public class UserPresenceService {
         return userPresenceRepository.findById(userId).orElseGet(() -> new UserPresence(userId, PresenceStatus.ONLINE, Instant.now()
         ));
     }
+
+    public java.util.List<UserPresence> getAll() {
+        return userPresenceRepository.findAll();
+    }
+
+    public java.util.List<UserPresence> getAllByIds(java.util.List<String> ids) {
+        return userPresenceRepository.findAllById(ids);
+    }
 }

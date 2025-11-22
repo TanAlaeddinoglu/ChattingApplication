@@ -41,7 +41,19 @@ services:
     ports:
       - "8081:8080"  # app is inside container on 8080 → host 8081
 
+  frontend:
+    build:
+      context: ./frontend/my-app
+      dockerfile: Dockerfile
+      args:
+        # Point the built frontend at the host-exposed backend (browser hits localhost)
+        VITE_API_BASE_URL: http://localhost:8081
+    container_name: chat-app-frontend
+    restart: always
+    depends_on:
+      - app
+    ports:
+      - "3000:80"  # serve built frontend via nginx on host port 3000
+
 volumes:
   mongo_data:
-
-

@@ -19,11 +19,12 @@ public class ChatRoomController {
 
     @PostMapping("/private")
     public ResponseEntity<ChatRoom> createPrivateRoom(@RequestBody PrivateRoomRequest request) {
-        ChatRoom room = chatRoomService.createRoom(
-                request.getCreatedBy(),
-                List.of(request.getUser1(), request.getUser2()),
-                RoomType.PRIVATE,
-                null
+
+        ChatRoom room = chatRoomService.findOrCreatePrivateRoom(
+                request.getUser1(),
+                request.getUser2(),
+                request.getCreatedBy()
+
         );
         return ResponseEntity.ok(room);
     }
@@ -46,9 +47,9 @@ public class ChatRoomController {
     }
 
     //TODO: group name ile getir
-    @GetMapping("/{roomId}")
-    public ResponseEntity<ChatRoom> getRoomById(@PathVariable String roomId) {
-        return ResponseEntity.ok(chatRoomService.getRoomById(roomId));
+    @GetMapping("/{roomName}")
+    public ResponseEntity<ChatRoom> getRoomByName(@PathVariable String roomName) {
+        return ResponseEntity.ok(chatRoomService.getRoomByName(roomName));
     }
 
 

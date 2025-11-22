@@ -19,5 +19,8 @@ public interface ChatRoomRepository extends MongoRepository<ChatRoom, String> {
     List<ChatRoom> findByNameContainingIgnoreCase(String name);
 
     Optional<ChatRoom> findByTypeAndMemberIds(RoomType type, List<String> memberIds);
+
+    Optional<ChatRoom> findByName(String roomName);
 }
+
 

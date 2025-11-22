@@ -3,10 +3,7 @@ package com.chattingapp.chattingapp.chatRoom;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 @Service
 public class ChatRoomService {
@@ -14,6 +11,34 @@ public class ChatRoomService {
 
     public ChatRoomService(ChatRoomRepository chatRoomRepository) {
         this.chatRoomRepository = chatRoomRepository;
+    }
+    public ChatRoom findOrCreatePrivateRoom(String user1, String user2, String createdBy) {
+
+        // 1) Normalize member names
+        List<String> members = new ArrayList<>(List.of(user1, user2));
+        Collections.sort(members);
+
+        String roomName = members.get(0) + "-" + members.get(1);
+
+        // 2) Check if room already exists
+        Optional<ChatRoom> existing = chatRoomRepository.findByName(roomName);
+        if (existing.isPresent()) {
+            return existing.get();
+        }
+
+        // 3) Create new room
+        ChatRoom newRoom = new ChatRoom(
+                UUID.randomUUID().toString(),
+                roomName,
+                RoomType.PRIVATE,
+                members,
+                createdBy,
+                Instant.now(),
+                null,
+                null
+        );
+
+        return chatRoomRepository.save(newRoom);
     }
 
     public ChatRoom createRoom(String createdBy,
@@ -46,6 +71,10 @@ public class ChatRoomService {
 
     public ChatRoom getRoomById(String roomId) {
         return chatRoomRepository.findById(roomId).orElseThrow(() -> new RuntimeException("Room with id " + roomId + " not found."));
+    }
+
+    public ChatRoom getRoomByName(String roomName) {
+        return chatRoomRepository.findByName(roomName).orElseThrow(() -> new RuntimeException("Room with name or id" + roomName + "not found"));
     }
 
     public ChatRoom addUserToRoom(String roomId, String newUserId) {
