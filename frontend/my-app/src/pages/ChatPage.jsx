@@ -11,7 +11,7 @@ const statusCopy = {
   connected: 'Connected',
   error: 'Error',
 };
-//branch
+
 function ChatPage({ username, onChangeUser }) {
   const [status, setStatus] = useState('disconnected');
   const [targetId, setTargetId] = useState('');
