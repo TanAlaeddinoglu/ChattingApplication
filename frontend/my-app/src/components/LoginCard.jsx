@@ -14,7 +14,6 @@ function LoginCard({ defaultName = '', onSubmit }) {
     setError('');
     onSubmit(trimmed);
   };
-//branch
   return (
     <div className="card">
       <div>
